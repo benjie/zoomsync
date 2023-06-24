@@ -2,6 +2,7 @@ import axios from "axios";
 import { GlobalContext } from "./interfaces";
 import { ZOOM_API_URL } from "./constants";
 import { stringify } from "node:querystring";
+import { paths } from "./zoomApiSchema";
 
 export function basicAuth(ctx: GlobalContext) {
   const { SECRETS } = ctx;
@@ -11,7 +12,14 @@ export function basicAuth(ctx: GlobalContext) {
   return `Basic ${b64}`;
 }
 
-export async function getZoomRecordings(ctx: GlobalContext, monthsAgo = 0) {
+export type Meeting = Exclude<
+  paths["/users/{userId}/recordings"]["get"]["responses"]["200"]["content"]["application/json"]["meetings"],
+  undefined
+>[number];
+export async function getZoomRecordings(
+  ctx: GlobalContext,
+  monthsAgo = 0
+): Promise<Meeting[]> {
   const from = new Date();
   from.setMonth(from.getMonth() - monthsAgo);
   from.setMilliseconds(0);
@@ -21,27 +29,59 @@ export async function getZoomRecordings(ctx: GlobalContext, monthsAgo = 0) {
   from.setDate(1);
   const to = new Date(+from);
   to.setMonth(to.getMonth() + 1);
-  const { items } = await getAll(
-    ctx,
-    "/users/me/recordings",
-    {
-      from: from.toISOString().slice(0, 10),
-      to: to.toISOString().slice(0, 10),
-      page_size: 3,
-    },
-    "meetings"
-  );
-  return items;
+
+  let all: Meeting[] = [];
+  let nextPageToken = "";
+  do {
+    const nextResult = await get(
+      ctx,
+      "/users/me/recordings" as unknown as "/users/{userId}/recordings",
+      {
+        from: from.toISOString().slice(0, 10),
+        to: to.toISOString().slice(0, 10),
+        page_size: 3,
+        next_page_token: nextPageToken,
+      }
+    );
+    nextPageToken = nextResult.next_page_token ?? "";
+    const meetings: Meeting[] = nextResult.meetings!;
+    all.push(...meetings);
+  } while (nextPageToken);
+  return all;
 }
 
-async function get<TData>(
+// Constrained form of 'paths' for just those that we can get()
+type gettablePaths = {
+  [k in keyof paths as paths[k] extends {
+    get: {
+      parameters: {
+        query?: Record<string, any>;
+      };
+      responses: {
+        200: {
+          content: {
+            "application/json": Record<string, any>;
+          };
+        };
+      };
+    };
+  }
+    ? k
+    : never]: paths[k];
+};
+
+async function get<const TPath extends keyof gettablePaths>(
   ctx: GlobalContext,
-  path: string,
-  params: Record<string, string | number>
-) {
-  const url = `${ZOOM_API_URL}${path}?${stringify(params)}`;
+  path: TPath,
+  params: gettablePaths[TPath]["get"]["parameters"]["query"]
+): Promise<
+  gettablePaths[TPath]["get"]["responses"][200]["content"]["application/json"]
+> {
+  const url = `${ZOOM_API_URL}${path}?${stringify(params as any)}`;
   console.log(`Loading ${url}...`);
-  return await axios<TData>({
+  const response = await axios<
+    gettablePaths[TPath]["get"]["responses"][200]["content"]["application/json"]
+  >({
     method: "GET",
     url,
     headers: {
@@ -49,30 +89,11 @@ async function get<TData>(
       Accept: "application/json",
     },
   });
-}
 
-async function getAll<
-  TData extends Record<string, any>,
-  TListKey extends keyof TData
->(
-  ctx: GlobalContext,
-  url: string,
-  params: Record<string, string | number>,
-  listKey: TListKey
-): Promise<{ items: TData[TListKey] }> {
-  let all: any = [];
-  let nextPageToken = "";
-  do {
-    const nextResult = await get<TData & { next_page_token: string }>(
-      ctx,
-      url,
-      {
-        ...params,
-        next_page_token: nextPageToken,
-      }
-    );
-    nextPageToken = nextResult.data.next_page_token;
-    all.push(...(nextResult.data[listKey] as any[]));
-  } while (nextPageToken);
-  return { items: all };
+  if (response.status !== 200) {
+    console.error(response.data);
+    throw new Error(`Request failed with status code '${response.status}'`);
+  }
+
+  return response.data;
 }

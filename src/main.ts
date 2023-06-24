@@ -14,6 +14,7 @@ async function main() {
   await runOAuthServer(ctx);
   for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
     const allRecordingsFromMonth = await getZoomRecordings(ctx, monthsAgo);
+    console.log(allRecordingsFromMonth);
 
     // TODO: don't break
     break;

@@ -29714,17 +29714,17 @@ export interface operations {
                    * @enum {array}
                    */
                   unchecked_data_center_regions?:
-                    | EU
-                    | HK
-                    | AU
-                    | IN
-                    | TY
-                    | CN
-                    | US
-                    | CA
-                    | DE
-                    | NL
-                    | LA;
+                    | "EU"
+                    | "HK"
+                    | "AU"
+                    | "IN"
+                    | "TY"
+                    | "CN"
+                    | "US"
+                    | "CA"
+                    | "DE"
+                    | "NL"
+                    | "LA";
                   /**
                    * @description Allow  HTML formatting instead of plain text for meeting invitations scheduled with the Outlook plugin.
                    * @example true
