@@ -1,5 +1,7 @@
 # ZoomSync
 
+(WORK IN PROGRESS.)
+
 Manages uploading meetings from Zoom to YouTube.
 
 Aims:
