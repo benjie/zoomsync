@@ -1,6 +1,6 @@
 import { YOUTUBE_CHANNEL_ID } from "./constants";
 import { GlobalContext } from "./interfaces";
-import { google } from "googleapis";
+import { google, youtube_v3 } from "googleapis";
 
 export async function getUploads(ctx: GlobalContext) {
   const youtubeClient = google.youtube({
@@ -30,9 +30,21 @@ export async function getUploads(ctx: GlobalContext) {
     throw new Error(`Couldn't find the uploads Channel!`);
   }
 
-  const uploadsChannelResult = await youtubeClient.playlistItems.list({
-    part: ["id", "contentDetails", "snippet", "status"],
-    playlistId: uploadsChannelId,
-  });
-  console.dir(uploadsChannelResult.data);
+  let pageToken: string | undefined = undefined;
+  const all: youtube_v3.Schema$PlaylistItem[] = [];
+  do {
+    const uploadsChannelResult = await youtubeClient.playlistItems.list({
+      part: ["id", "contentDetails", "snippet", "status"],
+      playlistId: uploadsChannelId,
+      maxResults: 50,
+      pageToken,
+    });
+    if (uploadsChannelResult.data.items) {
+      all.push(...uploadsChannelResult.data.items);
+    }
+    pageToken = uploadsChannelResult.data.nextPageToken as string | undefined;
+  } while (pageToken);
+  for (const item of all) {
+    console.log(item.snippet?.title, item.snippet?.publishedAt);
+  }
 }
