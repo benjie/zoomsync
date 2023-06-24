@@ -7,7 +7,12 @@
  */
 
 import axios from "axios";
-import { ZOOM_AUTHORIZE_URL, ZOOM_TOKEN_URL } from "./constants";
+import {
+  GOOGLE_AUTHORIZE_URL,
+  GOOGLE_TOKEN_URL,
+  ZOOM_AUTHORIZE_URL,
+  ZOOM_TOKEN_URL,
+} from "./constants";
 import { GlobalContext } from "./interfaces";
 import express from "express";
 import { stringify } from "node:querystring";

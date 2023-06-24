@@ -6,6 +6,9 @@ export interface Secrets {
   ZOOM_CLIENT_ID: string;
   ZOOM_CLIENT_SECRET: string;
   ZOOM_SECRET_TOKEN: string;
+
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
 }
 
 export interface GlobalContext {

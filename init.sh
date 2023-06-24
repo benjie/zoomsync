@@ -16,6 +16,9 @@ export const SECRETS: Secrets = {
   ZOOM_CLIENT_ID: "PHWkXfbFSjWV5oNin9Djg",
   ZOOM_CLIENT_SECRET: "...",
   ZOOM_SECRET_TOKEN: "...",
+
+  GOOGLE_CLIENT_ID: "...",
+  GOOGLE_CLIENT_SECRET: "...",
 };
 
 HERE
