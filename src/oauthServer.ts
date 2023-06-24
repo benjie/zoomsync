@@ -11,9 +11,10 @@ import { ZOOM_AUTHORIZE_URL, ZOOM_TOKEN_URL } from "./constants";
 import { GlobalContext } from "./interfaces";
 import express from "express";
 import { stringify } from "node:querystring";
-import { saveResult } from "./tokenManagement";
+import { saveResult } from "./zoomTokenManagement";
 import * as fs from "node:fs/promises";
 import * as https from "node:https";
+import { basicAuth } from "./zoomClient";
 
 export async function runOAuthServer(ctx: GlobalContext) {
   const { SECRETS } = ctx;
@@ -32,14 +33,11 @@ export async function runOAuthServer(ctx: GlobalContext) {
   app.get("/zoom/auth/redirect", async (req, res, next) => {
     try {
       const code = String(req.query.code);
-      const b64 = Buffer.from(
-        `${SECRETS.ZOOM_CLIENT_ID}:${SECRETS.ZOOM_CLIENT_SECRET}`
-      ).toString("base64");
       const response = await axios({
         method: "POST",
         url: ZOOM_TOKEN_URL,
         headers: {
-          Authorization: `Basic ${b64}`,
+          Authorization: basicAuth(ctx),
           "Content-Type": "application/x-www-form-urlencoded",
           Accept: "application/json",
         },

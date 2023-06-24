@@ -11,8 +11,8 @@ export interface Secrets {
 export interface GlobalContext {
   SECRETS: Secrets;
   eventEmitter: OurEventEmitter;
-  token?: string;
-  refreshToken?: string;
+  zoomToken?: string;
+  zoomRefreshToken?: string;
 }
 
 type BaseEventMap = Record<string, any>;
