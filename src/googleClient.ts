@@ -81,14 +81,18 @@ export async function getPlaylists(ctx: GlobalContext) {
 export async function uploadVideo(
   ctx: GlobalContext,
   filePath: string,
-  snippet: youtube_v3.Schema$VideoSnippet
+  snippet: youtube_v3.Schema$VideoSnippet,
+  playlistId: string
 ) {
   const youtubeClient = google.youtube({
     version: "v3",
     auth: ctx.googleOAuthClient,
   });
 
-  await youtubeClient.videos.insert({
+  // TODO: should add retry logic!
+
+  // Upload the video:
+  const response = await youtubeClient.videos.insert({
     part: ["snippet", "status"],
     requestBody: {
       snippet,
@@ -98,6 +102,17 @@ export async function uploadVideo(
     },
     media: {
       body: createReadStream(filePath),
+    },
+  });
+
+  // And add it to the playlist:
+  await youtubeClient.playlistItems.insert({
+    part: ["contentDetails"],
+    requestBody: {
+      id: playlistId,
+      contentDetails: {
+        videoId: response.data.id,
+      },
     },
   });
 }

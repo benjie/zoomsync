@@ -1,4 +1,4 @@
-import { ZOOM_API_URL, workingGroups } from "./constants";
+import { ZOOM_API_URL, playlistIds, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { blue } from "./logging";
 import { getPendingMeetings } from "./matching";
@@ -91,14 +91,19 @@ async function upload(
   filePath: string
 ) {
   // TODO
-  await uploadVideo(ctx, filePath, {
-    title: toUploadSpec.title,
-    description: workingGroups[toUploadSpec.wgId].ytDescription,
-    // TODO: tags,
-    categoryId: "28" /* science and technology */,
-    defaultLanguage: "en",
-    defaultAudioLanguage: "en",
-  });
+  await uploadVideo(
+    ctx,
+    filePath,
+    {
+      title: toUploadSpec.title,
+      description: workingGroups[toUploadSpec.wgId].ytDescription,
+      // TODO: tags,
+      categoryId: "28" /* science and technology */,
+      defaultLanguage: "en",
+      defaultAudioLanguage: "en",
+    },
+    playlistIds[toUploadSpec.wgId]
+  );
 }
 
 function makeTitle(pending: Pending, count: number): string {
