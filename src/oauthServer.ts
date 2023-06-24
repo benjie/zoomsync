@@ -16,20 +16,25 @@ import {
 import { GlobalContext } from "./interfaces";
 import express from "express";
 import { stringify } from "node:querystring";
-import { saveResult } from "./zoomTokenManagement";
+import { saveResult as saveZoomResult } from "./zoomTokenManagement";
+import { saveResult as saveGoogleResult } from "./googleTokenManagement";
 import * as fs from "node:fs/promises";
 import * as https from "node:https";
 import { basicAuth } from "./zoomClient";
+import { google } from "googleapis";
 
 export async function runOAuthServer(ctx: GlobalContext) {
-  const { SECRETS } = ctx;
+  const { SECRETS, googleOAuthClient } = ctx;
+
   const app = express();
-  const redirectUri = `https://localhost:${SECRETS.PORT}/zoom/auth/redirect`;
+
+  const zoomRedirectUri = `https://localhost:${SECRETS.PORT}/zoom/auth/redirect`;
+
   app.get("/zoom/login", (req, res) => {
     res.redirect(
       `${ZOOM_AUTHORIZE_URL}?${stringify({
         response_type: "code",
-        redirect_uri: redirectUri,
+        redirect_uri: zoomRedirectUri,
         client_id: SECRETS.ZOOM_CLIENT_ID,
       })}`
     );
@@ -49,11 +54,36 @@ export async function runOAuthServer(ctx: GlobalContext) {
         data: {
           code,
           grant_type: "authorization_code",
-          redirect_uri: redirectUri,
+          redirect_uri: zoomRedirectUri,
         },
       });
-      await saveResult(ctx, response.data);
-      res.end(`Token acquired, return to terminal.`);
+      await saveZoomResult(ctx, response.data);
+      res.end(`Zoom token acquired, return to terminal.`);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  const googleScopes = [
+    "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/youtube.upload",
+  ];
+
+  app.get("/google/login", (req, res) => {
+    const url = googleOAuthClient.generateAuthUrl({
+      access_type: "offline",
+      scope: googleScopes,
+    });
+    res.redirect(url);
+  });
+
+  app.get("/google/auth/redirect", async (req, res, next) => {
+    try {
+      const code = String(req.query.code);
+      const { tokens } = await googleOAuthClient.getToken(code);
+      await saveGoogleResult(ctx, tokens);
+      res.end(`Google token acquired, return to terminal.`);
     } catch (e) {
       next(e);
     }

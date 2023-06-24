@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { Auth } from "googleapis";
 
 export interface Secrets {
   PORT: string;
@@ -16,6 +17,8 @@ export interface GlobalContext {
   eventEmitter: OurEventEmitter;
   zoomToken?: string;
   zoomRefreshToken?: string;
+  googleOAuthClient: Auth.OAuth2Client;
+  googleCredentials?: Auth.Credentials;
 }
 
 type BaseEventMap = Record<string, any>;
@@ -56,8 +59,12 @@ type EventMap = {
   /**
    * We have an access token again
    */
-  token: {
+  zoomToken: {
     token: string;
+  };
+
+  googleCredentials: {
+    credentials: Auth.Credentials;
   };
 };
 

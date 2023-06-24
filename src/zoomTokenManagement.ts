@@ -12,14 +12,14 @@ interface OAuthResult {
   scope: string;
 }
 
-const OAUTH_FILE_PATH = `${__dirname}/../.oauthResult.json`;
+const OAUTH_FILE_PATH = `${__dirname}/../.zoomOAuthResult.json`;
 export async function loadResult(ctx: GlobalContext) {
   try {
     const data = await fs.readFile(OAUTH_FILE_PATH, "utf8");
     const parsed = JSON.parse(data) as { data: OAuthResult; ts: number };
     ctx.zoomToken = parsed.data.access_token;
     ctx.zoomRefreshToken = parsed.data.refresh_token;
-    console.log(`Loaded existing token from file`);
+    console.log(`Loaded existing zoom token from file`);
 
     const expires = parsed.ts + parsed.data.expires_in * 1000;
     if (expires - Date.now() < 30 * 60 * 1000) {
@@ -33,7 +33,7 @@ export async function loadResult(ctx: GlobalContext) {
 
 export async function saveResult(ctx: GlobalContext, data: any) {
   const token = data.access_token;
-  ctx.eventEmitter.emit("token", { token });
+  ctx.eventEmitter.emit("zoomToken", { token });
   await fs.writeFile(
     OAUTH_FILE_PATH,
     JSON.stringify({ data, ts: Date.now() }, null, 2) + "\n"
@@ -44,7 +44,7 @@ let pendingRefresh: Promise<void> | null = null;
 export async function refreshToken(ctx: GlobalContext) {
   if (!pendingRefresh) {
     pendingRefresh = (async () => {
-      console.log("Refreshing token...");
+      console.log("Refreshing zoom token...");
       try {
         const response = await axios({
           method: "POST",
@@ -60,9 +60,9 @@ export async function refreshToken(ctx: GlobalContext) {
           },
         });
         await saveResult(ctx, response.data);
-        console.log("Token refreshed");
+        console.log("Zoom token refreshed");
       } catch (e) {
-        console.error("Token refresh failed: ", e);
+        console.error("Zoom token refresh failed: ", e);
         throw e;
       }
     })();

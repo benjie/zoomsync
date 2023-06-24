@@ -2,7 +2,8 @@
 .yarn/install-state.gz
 node_modules
 src/secrets.ts
-.oauthResult.json
+.zoomOAuthResult.json
+.googleOAuthResult.json
 key.pem
 cert.pem
 dist/
