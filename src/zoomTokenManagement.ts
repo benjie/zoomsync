@@ -20,8 +20,12 @@ export async function loadResult(ctx: GlobalContext) {
     ctx.zoomToken = parsed.data.access_token;
     ctx.zoomRefreshToken = parsed.data.refresh_token;
     console.log(`Loaded existing token from file`);
-    // TODO: only do this if the token is near expiration
-    await refreshToken(ctx);
+
+    const expires = parsed.ts + parsed.data.expires_in * 1000;
+    if (expires - Date.now() < 30 * 60 * 1000) {
+      // It's going to expire in the next 30 minutes; refresh
+      await refreshToken(ctx);
+    }
   } catch {
     // NOOP;
   }
