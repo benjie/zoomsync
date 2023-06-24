@@ -1,6 +1,7 @@
 import { YOUTUBE_CHANNEL_ID, playlistIds, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { google, youtube_v3 } from "googleapis";
+import { createReadStream } from "fs";
 
 export async function getUploads(ctx: GlobalContext) {
   const youtubeClient = google.youtube({
@@ -75,4 +76,28 @@ export async function getPlaylists(ctx: GlobalContext) {
     };
   }
   return playlists;
+}
+
+export async function uploadVideo(
+  ctx: GlobalContext,
+  filePath: string,
+  snippet: youtube_v3.Schema$VideoSnippet
+) {
+  const youtubeClient = google.youtube({
+    version: "v3",
+    auth: ctx.googleOAuthClient,
+  });
+
+  await youtubeClient.videos.insert({
+    part: ["snippet", "status"],
+    requestBody: {
+      snippet,
+      status: {
+        privacyStatus: "private", // TODO: when we're confident, change this!
+      },
+    },
+    media: {
+      body: createReadStream(filePath),
+    },
+  });
 }

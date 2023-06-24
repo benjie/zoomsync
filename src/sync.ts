@@ -7,6 +7,7 @@ import * as fs from "node:fs/promises";
 import { createWriteStream } from "node:fs";
 import axios from "axios";
 import * as https from "node:https";
+import { uploadVideo } from "./googleClient";
 
 const VIDEO_DOWNLOAD_BASE = `${__dirname}/../cache/videos`;
 
@@ -90,6 +91,14 @@ async function upload(
   filePath: string
 ) {
   // TODO
+  await uploadVideo(ctx, filePath, {
+    title: toUploadSpec.title,
+    description: workingGroups[toUploadSpec.wgId].ytDescription,
+    // TODO: tags,
+    categoryId: "28" /* science and technology */,
+    defaultLanguage: "en",
+    defaultAudioLanguage: "en",
+  });
 }
 
 function makeTitle(pending: Pending, count: number): string {

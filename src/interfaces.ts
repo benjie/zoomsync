@@ -80,6 +80,7 @@ export interface WorkingGroup {
     label: string;
   }>;
   max?: number;
+  ytDescription: string;
   /**
    * If this isn't really a working group and should be ignored, set true
    */
