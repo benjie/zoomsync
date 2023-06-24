@@ -19,7 +19,7 @@ async function cache<TData>(
   name: string,
   callback: () => Promise<TData>
 ): Promise<TData> {
-  const filePath = `${__dirname}/../${name}.json`;
+  const filePath = `${__dirname}/../cache/${name}.json`;
   try {
     const stats = await fs.stat(filePath);
     if (+stats.mtime < Date.now() - 2 * HOUR) {
@@ -52,7 +52,6 @@ async function main() {
   const uploads = await cache("uploads", () => getUploads(ctx));
   const playlists = await cache("playlists", () => getPlaylists(ctx));
   const categorizedVideos = categorizeUploads(uploads, playlists);
-  if (Math.random() < 2) return;
 
   for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
     const allRecordingsFromMonth = await cache(`recordings-${monthsAgo}`, () =>

@@ -7,3 +7,4 @@ src/secrets.ts
 key.pem
 cert.pem
 dist/
+/cache
