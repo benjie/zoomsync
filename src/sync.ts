@@ -1,4 +1,9 @@
-import { ZOOM_API_URL, playlistIds, workingGroups } from "./constants";
+import {
+  YOUTUBE_CHANNEL_ID,
+  ZOOM_API_URL,
+  playlistIds,
+  workingGroups,
+} from "./constants";
 import { GlobalContext } from "./interfaces";
 import { blue } from "./logging";
 import { getPendingMeetings } from "./matching";
@@ -80,6 +85,7 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
           Authorization: `Bearer ${ctx.zoomToken}`,
         });
         await upload(ctx, toUploadSpec, filePath);
+        console.log(`Deleting...`);
         await fs.unlink(filePath);
       }
     }
@@ -96,6 +102,7 @@ async function upload(
     ctx,
     filePath,
     {
+      channelId: YOUTUBE_CHANNEL_ID,
       title: toUploadSpec.title,
       description: workingGroups[toUploadSpec.wgId].ytDescription,
       // TODO: tags,
