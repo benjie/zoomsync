@@ -7,6 +7,7 @@ import { loadResult as loadGoogleResult } from "./googleTokenManagement";
 import { Meeting, getZoomRecordings } from "./zoomClient";
 import * as fs from "node:fs/promises";
 import { google } from "googleapis";
+import { getUploads } from "./googleClient";
 
 async function main() {
   const googleRedirectUri = `https://localhost:${SECRETS.PORT}/google/auth/redirect`;
@@ -23,6 +24,7 @@ async function main() {
   await loadZoomResult(ctx);
   await loadGoogleResult(ctx);
   await runOAuthServer(ctx);
+  await getUploads(ctx);
   for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
     const allRecordingsFromMonth = await getZoomRecordings(ctx, monthsAgo);
     console.log(allRecordingsFromMonth);
