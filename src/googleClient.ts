@@ -109,7 +109,7 @@ export async function uploadVideo(
   console.log(`Adding to playlist...`);
   // And add it to the playlist:
   await youtubeClient.playlistItems.insert({
-    part: ["id"],
+    part: ["id", "snippet"],
     requestBody: {
       snippet: {
         playlistId,
