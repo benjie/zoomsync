@@ -74,6 +74,12 @@ export interface WorkingGroup {
   name: string;
   aliases: string[];
   repo: string;
+  subtitles?: Array<{
+    dateMin: number;
+    dateMax: number;
+    label: string;
+  }>;
+  max?: number;
   /**
    * If this isn't really a working group and should be ignored, set true
    */

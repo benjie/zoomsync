@@ -1,8 +1,12 @@
 import { youtube_v3 } from "googleapis";
 import { getPlaylists } from "./googleClient";
-import { workingGroups } from "./constants";
+import {
+  MIN_DURATION_MINUTES,
+  MIN_FILE_SIZE_BYTES,
+  workingGroups,
+} from "./constants";
 import { Meeting } from "./zoomClient";
-import { INFO, WARN } from "./logging";
+import { INFO, WARN, red } from "./logging";
 
 export function categorizeUploads(
   uploads: youtube_v3.Schema$PlaylistItem[],
@@ -174,21 +178,38 @@ export function getPendingMeetings(
   meetings: Meeting[],
   categorizedVideos: ReturnType<typeof categorizeUploads>
 ) {
-  const pending: { meeting: Meeting; wgId: keyof typeof workingGroups }[] = [];
+  const pending: {
+    meeting: Meeting;
+    wgId: keyof typeof workingGroups;
+    date: string;
+  }[] = [];
   for (const meeting of meetings) {
     const { duration, total_size, topic, start_time } = meeting;
-    const humanSize = byteFormatter.format(total_size!);
-    if (duration! < 5) {
+    const humanDuration =
+      duration! > 5 ? red(String(duration)) : String(duration);
+    const humanSize =
+      total_size! > 5_000_000
+        ? red(byteFormatter.format(total_size!))
+        : byteFormatter.format(total_size!);
+    const humanFileCount =
+      meeting.recording_count! > 2
+        ? red(String(meeting.recording_count))
+        : String(meeting.recording_count);
+    if (duration! < MIN_DURATION_MINUTES) {
       // Meeting is less than 5 minutes; probably irrelevant
       console.log(
-        `${INFO}Skipping ${duration} minute ${humanSize} meeting '${topic}' (started ${start_time}) - too short.`
+        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too short.\n  --> ${
+          (meeting as any).share_url
+        }}`
       );
       continue;
     }
-    if (total_size! < 5_000_000) {
+    if (total_size! < MIN_FILE_SIZE_BYTES) {
       // Meeting is less than 5 minutes; probably irrelevant
       console.log(
-        `${INFO}Skipping ${duration} minute ${humanSize} meeting '${topic}' (started ${start_time}) - too small.`
+        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too small.\n  --> ${
+          (meeting as any).share_url
+        }}`
       );
       continue;
     }
@@ -221,7 +242,10 @@ export function getPendingMeetings(
     if (uploaded) {
       continue;
     }
-    pending.push({ meeting, wgId });
+    pending.push({ meeting, wgId, date });
   }
+  pending.sort((a, z) =>
+    a.meeting.start_time!.localeCompare(z.meeting.start_time!)
+  );
   return pending;
 }

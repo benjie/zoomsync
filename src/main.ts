@@ -4,17 +4,13 @@ import { GlobalContext } from "./interfaces";
 import { runOAuthServer } from "./oauthServer";
 import { loadResult as loadZoomResult } from "./zoomTokenManagement";
 import { loadResult as loadGoogleResult } from "./googleTokenManagement";
-import { Meeting, getZoomRecordings } from "./zoomClient";
+import { getZoomRecordings } from "./zoomClient";
 import * as fs from "node:fs/promises";
 import { google } from "googleapis";
 import { getPlaylists, getUploads } from "./googleClient";
-import {
-  categorizeUploads,
-  getPendingMeetings,
-  guessWgByMeeting,
-} from "./matching";
-import { workingGroups } from "./constants";
+import { categorizeUploads, getPendingMeetings } from "./matching";
 import { INFO } from "./logging";
+import { uploadPending } from "./sync";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -60,6 +56,7 @@ async function main() {
   const categorizedVideos = categorizeUploads(uploads, playlists);
 
   for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
+    console.log();
     const allRecordingsFromMonth = await cache(`recordings-${monthsAgo}`, () =>
       getZoomRecordings(ctx, monthsAgo)
     );
@@ -69,7 +66,7 @@ async function main() {
     );
 
     if (pending.length > 0) {
-      console.dir(pending);
+      await uploadPending(ctx, pending);
       // TODO: don't break
       break;
     } else {
@@ -78,6 +75,8 @@ async function main() {
       );
     }
   }
+  console.log();
+  console.log("All done!");
 }
 
 main().catch((e) => {
