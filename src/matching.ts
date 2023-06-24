@@ -1,6 +1,6 @@
 import { youtube_v3 } from "googleapis";
 import { getPlaylists } from "./googleClient";
-import { playlistIds, workingGroups } from "./constants";
+import { workingGroups } from "./constants";
 
 export function categorizeUploads(
   uploads: youtube_v3.Schema$PlaylistItem[],
@@ -16,6 +16,22 @@ export function categorizeUploads(
       }
     }
   }
+
+  let warnings = 0;
+  const videosByWg: {
+    [key in keyof typeof workingGroups]: Array<{
+      title: string;
+      videoId: string;
+      /** YYYY-MM-DD */
+      date: string;
+    }>;
+  } = (Object.keys(workingGroups) as (keyof typeof workingGroups)[]).reduce(
+    (memo, k) => {
+      memo[k] = [];
+      return memo;
+    },
+    Object.create(null) as any
+  );
 
   for (const upload of uploads) {
     const videoId = upload.contentDetails?.videoId;
@@ -44,18 +60,45 @@ export function categorizeUploads(
             workingGroups[wgFromPlaylist]!.name
           }`
         );
+        warnings++;
       }
     } else if (wgFromTitle) {
       // TODO: add to playlist
       console.warn(
         `Video title '${title}' id '${videoId}' expected in playlist ${workingGroups[wgFromTitle].name}`
       );
+      warnings++;
     } else {
       console.warn(
         `Video title '${title}' id '${videoId}' unknown working group`
       );
+      warnings++;
+    }
+    const wg = wgFromTitle || wgFromPlaylist;
+    if (wg) {
+      const i = title.indexOf(" - ");
+      if (i < 0) {
+        throw new Error(
+          `Could not split title into date part '${title}' - needs to contain ' - '`
+        );
+      }
+      const remainderOfTitle = title.slice(i + 3);
+      const date = dateFromText(remainderOfTitle);
+      videosByWg[wg].push({
+        title,
+        videoId,
+        date,
+      });
     }
   }
+
+  if (warnings > 0) {
+    throw new Error(`Aborting due to ${warnings} warnings`);
+  }
+
+  console.log(videosByWg);
+
+  return videosByWg;
 
   function guessWgByTitle(upload: youtube_v3.Schema$PlaylistItem) {
     const title = upload.snippet?.title;
@@ -95,4 +138,16 @@ export function categorizeUploads(
     }
     return guess as keyof typeof workingGroups | null;
   }
+}
+
+function dateFromText(text: string): string {
+  const t = text.trim();
+  if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(t)) {
+    return t;
+  }
+  if (t.length < 10) throw new Error(`Could not interpret date '${t}'`);
+  const date = new Date(Date.parse(t));
+  date.setHours(date.getHours() + 12);
+  const str = date.toISOString().slice(0, 10);
+  return str;
 }
