@@ -111,9 +111,11 @@ export async function uploadVideo(
   await youtubeClient.playlistItems.insert({
     part: ["id"],
     requestBody: {
-      id: playlistId,
-      contentDetails: {
-        videoId: response.data.id,
+      snippet: {
+        playlistId,
+        resourceId: {
+          videoId: response.data.id!,
+        },
       },
     },
   });
