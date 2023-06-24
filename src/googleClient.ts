@@ -99,6 +99,7 @@ export async function uploadVideo(
       snippet,
       status: {
         privacyStatus: "private", // TODO: when we're confident, change this!
+        selfDeclaredMadeForKids: false,
       },
     },
     media: {
