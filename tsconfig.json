@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": {
-    "extends": "@tsconfig/node16/tsconfig.json"
-  },
+  "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
+    "declaration": true,
     "declarationDir": "./dist",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "esModuleInterop": true
   }
 }
