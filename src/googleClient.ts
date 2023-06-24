@@ -1,4 +1,4 @@
-import { YOUTUBE_CHANNEL_ID } from "./constants";
+import { YOUTUBE_CHANNEL_ID, playlistIds, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { google, youtube_v3 } from "googleapis";
 
@@ -47,4 +47,32 @@ export async function getUploads(ctx: GlobalContext) {
   for (const item of all) {
     console.log(item.snippet?.title, item.snippet?.publishedAt);
   }
+
+  return all;
+}
+
+export async function getPlaylists(ctx: GlobalContext) {
+  console.log("getPlaylists");
+  const youtubeClient = google.youtube({
+    version: "v3",
+    auth: ctx.googleOAuthClient,
+  });
+  const playlists: {
+    [playlistId: (typeof playlistIds)[keyof typeof playlistIds]]: {
+      workingGroupId: keyof typeof workingGroups;
+      videoIds: string[];
+    };
+  } = Object.create(null);
+  for (const [wgId, playlistId] of Object.entries(playlistIds)) {
+    const result = await youtubeClient.playlistItems.list({
+      part: ["id", "contentDetails"],
+      playlistId: playlistId,
+      maxResults: 100,
+    });
+    playlists[playlistId] = {
+      workingGroupId: wgId as any,
+      videoIds: result.data.items?.map((i) => i.contentDetails?.videoId!) ?? [],
+    };
+  }
+  return playlists;
 }

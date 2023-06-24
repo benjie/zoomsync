@@ -69,3 +69,13 @@ type EventMap = {
 };
 
 export type OurEventEmitter = TypedEventEmitter<EventMap>;
+
+export interface WorkingGroup {
+  name: string;
+  aliases: string[];
+  repo: string;
+  /**
+   * If this isn't really a working group and should be ignored, set true
+   */
+  ignore?: boolean;
+}
