@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "packageManager": "yarn@3.6.0",
+  "dependencies": {
+    "prettier": "^2.8.8"
+  },
+  "prettier": {
+    "proseWrap": "always"
+  }
+}
