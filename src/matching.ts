@@ -1,6 +1,8 @@
 import { youtube_v3 } from "googleapis";
 import { getPlaylists } from "./googleClient";
 import { workingGroups } from "./constants";
+import { Meeting } from "./zoomClient";
+import { INFO, WARN } from "./logging";
 
 export function categorizeUploads(
   uploads: youtube_v3.Schema$PlaylistItem[],
@@ -96,31 +98,14 @@ export function categorizeUploads(
     throw new Error(`Aborting due to ${warnings} warnings`);
   }
 
-  console.log(videosByWg);
-
   return videosByWg;
 
   function guessWgByTitle(upload: youtube_v3.Schema$PlaylistItem) {
-    const title = upload.snippet?.title;
-    const titleLower = title?.toLowerCase();
-    let guess: string | null = null;
-    for (const [wgId, details] of Object.entries(workingGroups)) {
-      if (
-        titleLower?.startsWith(details.name.toLowerCase()) ||
-        details.aliases.some((alias) =>
-          titleLower?.startsWith(alias.toLowerCase())
-        )
-      ) {
-        if (guess) {
-          throw new Error(
-            `Video ${upload.contentDetails
-              ?.videoId!} matches title with multiple working groups!`
-          );
-        }
-        guess = wgId;
-      }
+    try {
+      return guessWgByTitleText(upload.snippet?.title);
+    } catch (e: any) {
+      throw new Error(`Video ${upload.contentDetails?.videoId!}: ${e.message}`);
     }
-    return guess as keyof typeof workingGroups | null;
   }
 
   function guessWgByPlaylist(upload: youtube_v3.Schema$PlaylistItem) {
@@ -150,4 +135,93 @@ function dateFromText(text: string): string {
   date.setHours(date.getHours() + 12);
   const str = date.toISOString().slice(0, 10);
   return str;
+}
+
+function guessWgByTitleText(title: string | null | undefined) {
+  const titleLower = title?.toLowerCase();
+  let guess: string | null = null;
+  for (const [wgId, details] of Object.entries(workingGroups)) {
+    if (
+      titleLower?.startsWith(details.name.toLowerCase()) ||
+      details.aliases.some((alias) =>
+        titleLower?.startsWith(alias.toLowerCase())
+      )
+    ) {
+      if (guess) {
+        throw new Error(
+          `Title '${title}' matches title with multiple working groups!`
+        );
+      }
+      guess = wgId;
+    }
+  }
+  return guess as keyof typeof workingGroups | null;
+}
+
+export function guessWgByMeeting(meeting: Meeting) {
+  const { topic } = meeting;
+  return guessWgByTitleText(topic);
+}
+
+const byteFormatter = new Intl.NumberFormat([], {
+  style: "unit",
+  unit: "byte",
+  notation: "compact",
+  unitDisplay: "narrow",
+});
+
+export function getPendingMeetings(
+  meetings: Meeting[],
+  categorizedVideos: ReturnType<typeof categorizeUploads>
+) {
+  const pending: { meeting: Meeting; wgId: keyof typeof workingGroups }[] = [];
+  for (const meeting of meetings) {
+    const { duration, total_size, topic, start_time } = meeting;
+    const humanSize = byteFormatter.format(total_size!);
+    if (duration! < 5) {
+      // Meeting is less than 5 minutes; probably irrelevant
+      console.log(
+        `${INFO}Skipping ${duration} minute ${humanSize} meeting '${topic}' (started ${start_time}) - too short.`
+      );
+      continue;
+    }
+    if (total_size! < 5_000_000) {
+      // Meeting is less than 5 minutes; probably irrelevant
+      console.log(
+        `${INFO}Skipping ${duration} minute ${humanSize} meeting '${topic}' (started ${start_time}) - too small.`
+      );
+      continue;
+    }
+    const wgId = guessWgByMeeting(meeting);
+    if (!wgId) {
+      console.warn(
+        `${WARN}Cannot guess the working group for meeting '${topic}'`
+      );
+      continue;
+    }
+
+    const dateTime = new Date(Date.parse(start_time!));
+    const timeZone = "America/Los_Angeles";
+    const yyyy = dateTime.toLocaleString("en-US", {
+      timeZone,
+      year: "numeric",
+    });
+    const mm = dateTime.toLocaleString("en-US", {
+      timeZone,
+      month: "2-digit",
+    });
+    const dd = dateTime.toLocaleString("en-US", {
+      timeZone,
+      day: "2-digit",
+    });
+    const date = `${yyyy}-${mm}-${dd}`;
+
+    // Now determine if it has already been uploaded
+    const uploaded = categorizedVideos[wgId].some((a) => a.date === date);
+    if (uploaded) {
+      continue;
+    }
+    pending.push({ meeting, wgId });
+  }
+  return pending;
 }

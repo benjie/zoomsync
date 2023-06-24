@@ -8,7 +8,13 @@ import { Meeting, getZoomRecordings } from "./zoomClient";
 import * as fs from "node:fs/promises";
 import { google } from "googleapis";
 import { getPlaylists, getUploads } from "./googleClient";
-import { categorizeUploads } from "./matching";
+import {
+  categorizeUploads,
+  getPendingMeetings,
+  guessWgByMeeting,
+} from "./matching";
+import { workingGroups } from "./constants";
+import { INFO } from "./logging";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -57,15 +63,21 @@ async function main() {
     const allRecordingsFromMonth = await cache(`recordings-${monthsAgo}`, () =>
       getZoomRecordings(ctx, monthsAgo)
     );
-    await processMeetings(ctx, allRecordingsFromMonth);
+    const pending = getPendingMeetings(
+      allRecordingsFromMonth,
+      categorizedVideos
+    );
 
-    // TODO: don't break
-    break;
+    if (pending.length > 0) {
+      console.dir(pending);
+      // TODO: don't break
+      break;
+    } else {
+      console.log(
+        `${INFO}All videos already uploaded for ${monthsAgo} months ago`
+      );
+    }
   }
-}
-
-async function processMeetings(ctx: GlobalContext, meetings: Meeting[]) {
-  // console.log(meetings);
 }
 
 main().catch((e) => {

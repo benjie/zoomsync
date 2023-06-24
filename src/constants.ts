@@ -22,6 +22,7 @@ function wg(
 export const workingGroups = Object.freeze({
   WG: wg({
     name: "GraphQL Working Group",
+    aliases: ["Working Group Meeting"],
     repo: "https://github.com/graphql/graphql-wg",
   }),
   JS: wg({
