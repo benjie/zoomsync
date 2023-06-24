@@ -1,20 +1,27 @@
-import { workingGroups } from "./constants";
+import { ZOOM_API_URL, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { blue } from "./logging";
 import { getPendingMeetings } from "./matching";
+import readline from "node:readline";
+import * as fs from "node:fs/promises";
+import { createWriteStream } from "node:fs";
+import axios from "axios";
+import * as https from "node:https";
+
+const VIDEO_DOWNLOAD_BASE = `${__dirname}/../cache/videos`;
 
 type Pending = ReturnType<typeof getPendingMeetings>[number];
+type ToUploadSpec = Pending & { title: string };
 
 export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
   console.log();
   console.log();
-  console.log(
-    `Should I upload the following (you should check YouTube to ensure there will be no duplicates)?`
-  );
+  console.log(`Proposed uploads:`);
   console.log();
   const countByWg: { -readonly [wgId in keyof typeof workingGroups]: number } =
     Object.create(null);
   const seenTitles = new Map<string, Pending>();
+  const toUploadSpecs: Array<ToUploadSpec> = [];
   for (const pending of pendings) {
     if (!countByWg[pending.wgId]) {
       countByWg[pending.wgId] = 1;
@@ -39,7 +46,50 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
         pending.meeting.start_time
       }'\n  -> ${blue(title)}`
     );
+    toUploadSpecs.push({ ...pending, title });
   }
+
+  try {
+    await fs.mkdir(VIDEO_DOWNLOAD_BASE);
+  } catch {}
+
+  // readline
+
+  if (
+    !(await yn(
+      `Would you like me to upload the above? (You should check YouTube to ensure there will be no duplicates.) [y/N] `
+    ))
+  ) {
+    throw new Error(`User requested to abort`);
+  } else {
+    for (const toUploadSpec of toUploadSpecs) {
+      const dirName = Buffer.from(toUploadSpec.meeting.uuid!).toString("hex");
+      const uploadDir = `${VIDEO_DOWNLOAD_BASE}/${dirName}`;
+      try {
+        await fs.mkdir(uploadDir);
+      } catch {}
+      console.log(toUploadSpec.meeting.uuid);
+      for (const file of toUploadSpec.meeting.recording_files!) {
+        if (file.file_type !== "MP4") continue;
+        const filePath = `${uploadDir}/${Buffer.from(
+          toUploadSpec.meeting.uuid!
+        ).toString("hex")}.mp4`;
+        await download(file.download_url!, filePath, {
+          Authorization: `Bearer ${ctx.zoomToken}`,
+        });
+        await upload(ctx, toUploadSpec, filePath);
+        await fs.unlink(filePath);
+      }
+    }
+  }
+}
+
+async function upload(
+  ctx: GlobalContext,
+  toUploadSpec: ToUploadSpec,
+  filePath: string
+) {
+  // TODO
 }
 
 function makeTitle(pending: Pending, count: number): string {
@@ -61,4 +111,56 @@ function subtitle(pending: Pending, count: number): string {
       `Failed to find matching subtitle for date ${dd} count ${count}`
     );
   }
+}
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+function yn(message: string): Promise<boolean> {
+  return new Promise((resolve) =>
+    rl.question(message, (answer) => {
+      resolve(answer.toLowerCase()[0] === "y");
+    })
+  );
+}
+
+async function download(
+  url: string,
+  filePath: string,
+  headers?: Record<string, string>,
+  redirects = 0
+): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const request = https.get(
+      url,
+      {
+        headers,
+      },
+      (response) => {
+        if (response.statusCode === 302 || response.statusCode === 301) {
+          if (redirects > 10) {
+            reject(new Error(`Too many redirects`));
+          } else {
+            resolve(
+              download(
+                response.headers.location!,
+                filePath,
+                headers,
+                redirects + 1
+              )
+            );
+          }
+        } else if (response.statusCode === 200) {
+          const writeStream = createWriteStream(filePath);
+          response.pipe(writeStream);
+          writeStream.on("finish", resolve);
+        } else {
+          request.end();
+          reject(new Error(`Bad status code ${response.statusCode}`));
+        }
+      }
+    );
+  });
 }
