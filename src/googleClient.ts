@@ -91,6 +91,7 @@ export async function uploadVideo(
 
   // TODO: should add retry logic!
 
+  console.log(`Uploading...`);
   // Upload the video:
   const response = await youtubeClient.videos.insert({
     part: ["snippet", "status"],
@@ -105,6 +106,7 @@ export async function uploadVideo(
     },
   });
 
+  console.log(`Adding to playlist...`);
   // And add it to the playlist:
   await youtubeClient.playlistItems.insert({
     part: ["contentDetails"],
@@ -115,4 +117,5 @@ export async function uploadVideo(
       },
     },
   });
+  console.log(`Uploaded!`);
 }

@@ -69,12 +69,13 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
       try {
         await fs.mkdir(uploadDir);
       } catch {}
-      console.log(toUploadSpec.meeting.uuid);
+      console.log(`Processing '${toUploadSpec.title}'...`);
       for (const file of toUploadSpec.meeting.recording_files!) {
         if (file.file_type !== "MP4") continue;
         const filePath = `${uploadDir}/${Buffer.from(
           toUploadSpec.meeting.uuid!
         ).toString("hex")}.mp4`;
+        console.log(`Downloading...`);
         await download(file.download_url!, filePath, {
           Authorization: `Bearer ${ctx.zoomToken}`,
         });
