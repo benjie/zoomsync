@@ -51,6 +51,34 @@ async function main() {
   await loadGoogleResult(ctx);
   await runOAuthServer(ctx);
 
+  await runMainProcess(ctx);
+  ctx.eventEmitter.on("zoomToken", () => runMainProcess(ctx));
+  ctx.eventEmitter.on("googleCredentials", () => runMainProcess(ctx));
+}
+
+let running = false;
+async function runMainProcess(ctx: GlobalContext) {
+  if (running) {
+    console.warn(`Main process is already running; will not retry.`);
+    return;
+  }
+  running = true;
+  try {
+    await _dangerouslyRunMainProcess(ctx);
+  } catch (e) {
+    console.error(e);
+    console.error();
+    console.error(
+      "The above error occurred running the main process... Perhaps you need to re-authenticate?"
+    );
+    console.error(`  https://localhost:${SECRETS.PORT}/zoom/login`);
+    console.error(`  https://localhost:${SECRETS.PORT}/google/login`);
+  } finally {
+    running = false;
+  }
+}
+
+async function _dangerouslyRunMainProcess(ctx: GlobalContext) {
   const uploads = await cache("uploads", () => getUploads(ctx));
   const playlists = await cache("playlists", () => getPlaylists(ctx));
   const categorizedVideos = categorizeUploads(uploads, playlists);
