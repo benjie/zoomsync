@@ -33,6 +33,8 @@ export async function loadResult(ctx: GlobalContext) {
 
 export async function saveResult(ctx: GlobalContext, data: any) {
   const token = data.access_token;
+  ctx.zoomToken = token;
+  ctx.zoomRefreshToken = data.refresh_token;
   ctx.eventEmitter.emit("zoomToken", { token });
   await fs.writeFile(
     OAUTH_FILE_PATH,
