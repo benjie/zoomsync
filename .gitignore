@@ -8,3 +8,4 @@ key.pem
 cert.pem
 dist/
 /cache
+tsconfig.tsbuildinfo

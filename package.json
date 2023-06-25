@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "tsc && node dist/main.js"
+  },
   "private": true,
   "packageManager": "yarn@3.6.0",
   "dependencies": {
