@@ -11,6 +11,7 @@ import { getPlaylists, getUploads } from "./googleClient";
 import { categorizeUploads, getPendingMeetings } from "./matching";
 import { INFO } from "./logging";
 import { uploadPending } from "./sync";
+import { yn } from "./ui";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -44,6 +45,9 @@ async function cache<TData>(
   }
 }
 
+/**
+ * The main function, this is where everything starts.
+ */
 async function main() {
   try {
     await fs.mkdir(`${__dirname}/../cache`);
@@ -70,6 +74,9 @@ async function main() {
   ctx.eventEmitter.on("googleCredentials", () => runMainProcess(ctx));
 }
 
+/**
+ * Determines whether or not `_dangerouslyRunMainProcess` is running.
+ */
 let running = false;
 async function runMainProcess(ctx: GlobalContext) {
   if (running) {
@@ -92,7 +99,16 @@ async function runMainProcess(ctx: GlobalContext) {
   }
 }
 
-async function _dangerouslyRunMainProcess(ctx: GlobalContext) {
+async function _dangerouslyRunMainProcess(ctx: GlobalContext, now = false) {
+  const start = await yn(
+    `Would you like me to start the comparison and upload process${
+      now ? " _now_" : ""
+    }?`
+  );
+  if (!start) {
+    console.log("Okay fine... I won't start it yet.");
+    return _dangerouslyRunMainProcess(ctx, true);
+  }
   const uploads = await cache("uploads", () => getUploads(ctx));
   const playlists = await cache("playlists", () => getPlaylists(ctx));
   const categorizedVideos = categorizeUploads(uploads, playlists);
@@ -109,8 +125,6 @@ async function _dangerouslyRunMainProcess(ctx: GlobalContext) {
 
     if (pending.length > 0) {
       await uploadPending(ctx, pending);
-      // TODO: don't break
-      break;
     } else {
       console.log(
         `${INFO}All videos already uploaded for ${monthsAgo} months ago`
@@ -121,6 +135,8 @@ async function _dangerouslyRunMainProcess(ctx: GlobalContext) {
   console.log("All done!");
 }
 
+// Kicks off the main function. If we were running pure ESM-mode we wouldn't
+// need this due to top-level await, but for now it's a reasonable compromise.
 main().catch((e) => {
   console.error(e);
   process.exit(1);
