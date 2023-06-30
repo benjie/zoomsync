@@ -82,6 +82,9 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
         console.log(`Deleting...`);
         await fs.unlink(filePath);
       }
+      try {
+        await fs.rmdir(uploadDir);
+      } catch {}
     }
   }
 }
