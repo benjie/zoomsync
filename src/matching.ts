@@ -174,6 +174,21 @@ const byteFormatter = new Intl.NumberFormat([], {
   unitDisplay: "narrow",
 });
 
+export function getHumanDetails(meeting: Meeting, invert = true) {
+  const { duration, total_size } = meeting;
+  const humanDuration =
+    duration! > 5 !== invert ? red(String(duration)) : String(duration);
+  const humanSize =
+    total_size! > 5_000_000 !== invert
+      ? red(byteFormatter.format(total_size!))
+      : byteFormatter.format(total_size!);
+  const humanFileCount =
+    meeting.recording_count! > 2 !== invert
+      ? red(String(meeting.recording_count))
+      : String(meeting.recording_count);
+  return { humanDuration, humanSize, humanFileCount };
+}
+
 export function getPendingMeetings(
   meetings: Meeting[],
   categorizedVideos: ReturnType<typeof categorizeUploads>
@@ -185,16 +200,10 @@ export function getPendingMeetings(
   }[] = [];
   for (const meeting of meetings) {
     const { duration, total_size, topic, start_time } = meeting;
-    const humanDuration =
-      duration! > 5 ? red(String(duration)) : String(duration);
-    const humanSize =
-      total_size! > 5_000_000
-        ? red(byteFormatter.format(total_size!))
-        : byteFormatter.format(total_size!);
-    const humanFileCount =
-      meeting.recording_count! > 2
-        ? red(String(meeting.recording_count))
-        : String(meeting.recording_count);
+    const { humanDuration, humanSize, humanFileCount } = getHumanDetails(
+      meeting,
+      false
+    );
     if (duration! < MIN_DURATION_MINUTES) {
       // Meeting is less than 5 minutes; probably irrelevant
       console.log(

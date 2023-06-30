@@ -1,7 +1,7 @@
 import { YOUTUBE_CHANNEL_ID, playlistIds, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { blue } from "./logging";
-import { getPendingMeetings } from "./matching";
+import { getHumanDetails, getPendingMeetings } from "./matching";
 import * as fs from "node:fs/promises";
 import { createWriteStream } from "node:fs";
 import * as https from "node:https";
@@ -41,10 +41,15 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
       throw new Error(`'${title}' occurred more than once!`);
     }
     seenTitles.set(title.toLowerCase(), pending);
+    const { humanDuration, humanSize, humanFileCount } = getHumanDetails(
+      pending.meeting
+    );
     console.log(
       `- Zoom meeting '${pending.meeting.topic}' on '${
         pending.meeting.start_time
-      }'\n  -> ${blue(title)}`
+      }' (${humanSize}, ${humanDuration} minutes, ${humanFileCount} files)\n  -> ${blue(
+        title
+      )}`
     );
     toUploadSpecs.push({ ...pending, title });
   }
