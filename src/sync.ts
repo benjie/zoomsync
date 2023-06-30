@@ -1,18 +1,12 @@
-import {
-  YOUTUBE_CHANNEL_ID,
-  ZOOM_API_URL,
-  playlistIds,
-  workingGroups,
-} from "./constants";
+import { YOUTUBE_CHANNEL_ID, playlistIds, workingGroups } from "./constants";
 import { GlobalContext } from "./interfaces";
 import { blue } from "./logging";
 import { getPendingMeetings } from "./matching";
-import readline from "node:readline";
 import * as fs from "node:fs/promises";
 import { createWriteStream } from "node:fs";
-import axios from "axios";
 import * as https from "node:https";
 import { uploadVideo } from "./googleClient";
+import { yn } from "./ui";
 
 const VIDEO_DOWNLOAD_BASE = `${__dirname}/../cache/videos`;
 
@@ -97,7 +91,6 @@ async function upload(
   toUploadSpec: ToUploadSpec,
   filePath: string
 ) {
-  // TODO
   await uploadVideo(
     ctx,
     filePath,
@@ -133,19 +126,6 @@ function subtitle(pending: Pending, count: number): string {
       `Failed to find matching subtitle for date ${dd} count ${count}`
     );
   }
-}
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function yn(message: string): Promise<boolean> {
-  return new Promise((resolve) =>
-    rl.question(message, (answer) => {
-      resolve(answer.toLowerCase()[0] === "y");
-    })
-  );
 }
 
 async function download(
