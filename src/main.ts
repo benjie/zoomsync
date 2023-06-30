@@ -36,6 +36,11 @@ async function cache<TData>(
 }
 
 async function main() {
+  try {
+    await fs.mkdir(`${__dirname}/../cache`);
+  } catch {
+    // ignore
+  }
   const googleRedirectUri = `https://localhost:${SECRETS.PORT}/google/auth/redirect`;
   const googleClient = new google.auth.OAuth2(
     SECRETS.GOOGLE_CLIENT_ID,
