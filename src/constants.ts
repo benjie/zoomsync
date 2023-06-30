@@ -3,7 +3,7 @@ import { WorkingGroup } from "./interfaces";
 /** In general, videos under 15 minutes tend to be one person waiting for a call to start */
 export const MIN_DURATION_MINUTES = 15;
 /** In general, videos under 50MB tend to be one person waiting for a call to start */
-export const MIN_FILE_SIZE_BYTES = 50_000_000;
+export const MIN_FILE_SIZE_BYTES = 40_000_000;
 
 export const ZOOM_API_URL = "https://api.zoom.us/v2";
 export const ZOOM_AUTHORIZE_URL = "https://zoom.us/oauth/authorize";
