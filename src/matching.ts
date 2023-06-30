@@ -209,7 +209,7 @@ export function getPendingMeetings(
       console.log(
         `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too short.\n  --> ${
           (meeting as any).share_url
-        }}`
+        }`
       );
       continue;
     }
@@ -218,7 +218,7 @@ export function getPendingMeetings(
       console.log(
         `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too small.\n  --> ${
           (meeting as any).share_url
-        }}`
+        }`
       );
       continue;
     }
