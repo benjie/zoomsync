@@ -98,7 +98,8 @@ export async function uploadVideo(
     requestBody: {
       snippet,
       status: {
-        privacyStatus: "private", // TODO: when we're confident, change this!
+        // Set to "private" to allow publishing later, or "unlisted" to be able to share
+        privacyStatus: "public",
         selfDeclaredMadeForKids: false,
       },
     },
