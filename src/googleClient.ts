@@ -115,6 +115,7 @@ export async function uploadVideo(
       snippet: {
         playlistId,
         resourceId: {
+          kind: "youtube#video",
           videoId: response.data.id!,
         },
       },
