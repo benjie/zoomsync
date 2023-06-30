@@ -16,11 +16,20 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
 
-// TODO: this method is only for development, to stop us spamming APIs. Remove!
+// DO NOT SET THIS TO TRUE in normal usage. It's useful when iterating on the
+// comparison logic (for both speed and to stop us spamming Google/Zoom APIs),
+// but it will mean that comparisons are being done on potentially stale data,
+// which could lead to undesirable results.
+const enableCache = false;
+
 async function cache<TData>(
   name: string,
   callback: () => Promise<TData>
 ): Promise<TData> {
+  if (!enableCache) {
+    return callback();
+  }
+
   const filePath = `${__dirname}/../cache/${name}.json`;
   try {
     const stats = await fs.stat(filePath);
