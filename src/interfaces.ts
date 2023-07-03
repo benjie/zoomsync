@@ -77,6 +77,7 @@ export interface WorkingGroup {
   subtitles?: Array<{
     dateMin: number;
     dateMax: number;
+    dow?: "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
     label: string;
   }>;
   max?: number;

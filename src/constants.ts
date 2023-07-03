@@ -37,16 +37,19 @@ export const workingGroups = Object.freeze({
       {
         dateMin: 1,
         dateMax: 7,
+        dow: "Thu",
         label: "(Primary)",
       },
       {
         dateMin: 7,
         dateMax: 13,
+        dow: "Wed",
         label: "(Secondary, APAC)",
       },
       {
         dateMin: 15,
         dateMax: 21,
+        dow: "Thu",
         label: "(Secondary, EU)",
       },
     ],
