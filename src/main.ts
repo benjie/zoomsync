@@ -27,12 +27,12 @@ async function cache<TData>(
   name: string,
   callback: () => Promise<TData>
 ): Promise<TData> {
-  if (!enableCache) {
-    return callback();
-  }
-
   const filePath = `${__dirname}/../cache/${name}.json`;
   try {
+    if (!enableCache) {
+      // We still want to _write_ the cache, we just don't want to _read_ it.
+      throw new Error(`Cache is disabled`);
+    }
     const stats = await fs.stat(filePath);
     if (+stats.mtime < Date.now() - 2 * HOUR) {
       throw new Error(`Cache is out of date`);
