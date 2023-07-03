@@ -44,7 +44,7 @@ export async function getUploads(ctx: GlobalContext) {
       all.push(...uploadsChannelResult.data.items);
     }
     pageToken = uploadsChannelResult.data.nextPageToken as string | undefined;
-  } while (pageToken);
+  } while (pageToken != null);
   for (const item of all) {
     console.log(item.snippet?.title, item.snippet?.publishedAt);
   }
@@ -65,14 +65,24 @@ export async function getPlaylists(ctx: GlobalContext) {
     };
   } = Object.create(null);
   for (const [wgId, playlistId] of Object.entries(playlistIds)) {
-    const result = await youtubeClient.playlistItems.list({
-      part: ["id", "contentDetails"],
-      playlistId: playlistId,
-      maxResults: 100,
-    });
+    let pageToken: string | undefined = undefined;
+    const items: youtube_v3.Schema$PlaylistItem[] = [];
+    do {
+      const result = await youtubeClient.playlistItems.list({
+        part: ["id", "contentDetails"],
+        playlistId: playlistId,
+        maxResults: 50,
+        pageToken,
+      });
+      if (result.data.items) {
+        items.push(...result.data.items);
+      }
+      result.data.items;
+      pageToken = result.data.nextPageToken as string | undefined;
+    } while (pageToken != null);
     playlists[playlistId] = {
       workingGroupId: wgId as any,
-      videoIds: result.data.items?.map((i) => i.contentDetails?.videoId!) ?? [],
+      videoIds: items.map((i) => i.contentDetails?.videoId!) ?? [],
     };
   }
   return playlists;
