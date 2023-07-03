@@ -109,9 +109,9 @@ async function _dangerouslyRunMainProcess(ctx: GlobalContext, now = false) {
     console.log("Okay fine... I won't start it yet.");
     return _dangerouslyRunMainProcess(ctx, true);
   }
-  const uploads = await cache("uploads", () => getUploads(ctx));
-  const playlists = await cache("playlists", () => getPlaylists(ctx));
-  const categorizedVideos = categorizeUploads(uploads, playlists);
+  let uploads = await cache("uploads", () => getUploads(ctx));
+  let playlists = await cache("playlists", () => getPlaylists(ctx));
+  let categorizedVideos = categorizeUploads(uploads, playlists);
 
   for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
     console.log();
@@ -125,6 +125,10 @@ async function _dangerouslyRunMainProcess(ctx: GlobalContext, now = false) {
 
     if (pending.length > 0) {
       await uploadPending(ctx, pending);
+      // Refetch
+      uploads = await getUploads(ctx);
+      playlists = await getPlaylists(ctx);
+      categorizedVideos = categorizeUploads(uploads, playlists);
     } else {
       console.log(
         `${INFO}All videos already uploaded for ${monthsAgo} months ago`
