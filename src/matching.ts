@@ -204,21 +204,20 @@ export function getPendingMeetings(
       meeting,
       false
     );
+    const pass = (meeting as any).recording_play_passcode;
+    const playUrl = (meeting as any).share_url + (pass ? `?pwd=${pass}` : ``);
+
     if (duration! < MIN_DURATION_MINUTES) {
       // Meeting is less than 5 minutes; probably irrelevant
       console.log(
-        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too short.\n  --> ${
-          (meeting as any).share_url
-        }`
+        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too short.\n  --> ${playUrl}`
       );
       continue;
     }
     if (total_size! < MIN_FILE_SIZE_BYTES) {
       // Meeting is less than 5 minutes; probably irrelevant
       console.log(
-        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too small.\n  --> ${
-          (meeting as any).share_url
-        }`
+        `${INFO}Skipping ${humanDuration} minute ${humanSize} (${humanFileCount} files) meeting '${topic}' (started ${start_time}) - too small.\n  --> ${playUrl}`
       );
       continue;
     }
