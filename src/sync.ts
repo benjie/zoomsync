@@ -147,8 +147,10 @@ async function download(
   url: string,
   filePath: string,
   headers?: Record<string, string>,
-  redirects = 0
+  redirects = 0,
+  attempts = 1
 ): Promise<void> {
+  let done = false;
   await new Promise<void>((resolve, reject) => {
     const request = https.get(
       url,
@@ -156,28 +158,55 @@ async function download(
         headers,
       },
       (response) => {
+        request.off("error", handleError);
         if (response.statusCode === 302 || response.statusCode === 301) {
           if (redirects > 10) {
+            done = true;
             reject(new Error(`Too many redirects`));
           } else {
+            done = true;
             resolve(
               download(
                 response.headers.location!,
                 filePath,
                 headers,
-                redirects + 1
+                redirects + 1,
+                attempts
               )
             );
           }
         } else if (response.statusCode === 200) {
           const writeStream = createWriteStream(filePath);
           response.pipe(writeStream);
-          writeStream.on("finish", resolve);
+          writeStream.on("finish", () => {
+            done = true;
+            resolve();
+          });
         } else {
           request.end();
+          done = true;
           reject(new Error(`Bad status code ${response.statusCode}`));
         }
       }
     );
+    request.on("error", handleError);
+    function handleError(e: Error) {
+      console.error(`Error occurred fetching ${url}: ${e}`);
+      if (!done) {
+        if ((e as any).code === "ETIMEDOUT") {
+          done = true;
+          const delay = attempts * 5000;
+          console.log(`Retrying in ${delay}ms`);
+          // Try again
+          setTimeout(() => {
+            console.log(`Retrying...`);
+            resolve(download(url, filePath, headers, 0, attempts + 1));
+          }, delay);
+        } else {
+          done = true;
+          reject(e);
+        }
+      }
+    }
   });
 }
