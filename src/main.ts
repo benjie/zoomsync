@@ -100,14 +100,16 @@ async function runMainProcess(ctx: GlobalContext) {
 }
 
 async function _dangerouslyRunMainProcess(ctx: GlobalContext, now = false) {
-  const start = await yn(
-    `Would you like me to start the comparison and upload process${
-      now ? " _now_" : ""
-    }? [y/N] `
-  );
-  if (start !== true) {
-    console.log("Okay fine... I won't start it yet.");
-    return _dangerouslyRunMainProcess(ctx, true);
+  if (!ctx.zoomToken || !ctx.googleCredentials) {
+    const start = await yn(
+      `Would you like me to start the comparison and upload process${
+        now ? " _now_" : ""
+      }? [y/N] `
+    );
+    if (start !== true) {
+      console.log("Okay fine... I won't start it yet.");
+      return _dangerouslyRunMainProcess(ctx, true);
+    }
   }
   let uploads = await cache("uploads", () => getUploads(ctx));
   let playlists = await cache("playlists", () => getPlaylists(ctx));
