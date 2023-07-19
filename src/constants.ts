@@ -92,6 +92,10 @@ export const workingGroups = Object.freeze({
     repo: "https://github.com/graphql/graphql-spec/issues/300",
     max: 1,
   }),
+  CCN: wg({
+    name: "Client Controlled Nullability",
+    repo: "https://github.com/graphql/client-controlled-nullability",
+  }),
   IGNORE_CONFERENCE_TALKS: wg({
     name: "CONFERENCE TALKS",
     repo: "",
@@ -109,4 +113,5 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   HTTP: "PLP1igyLx8foEz9127xc0SsabIrbTMt9g5",
   METADATA: "PLP1igyLx8foF5nZFcwhvKszPMK_LpgjDf",
   IGNORE_CONFERENCE_TALKS: "PLP1igyLx8foGJrtkgYL9nunvC5qMXTVaa",
+  CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
 };
