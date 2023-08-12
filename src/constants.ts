@@ -101,6 +101,11 @@ export const workingGroups = Object.freeze({
     repo: "",
     ignore: true,
   }),
+  IGNORE_MEETUPS: wg({
+    name: "MEETUPS",
+    repo: "",
+    ignore: true,
+  }),
 });
 
 export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
@@ -113,5 +118,6 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   HTTP: "PLP1igyLx8foEz9127xc0SsabIrbTMt9g5",
   METADATA: "PLP1igyLx8foF5nZFcwhvKszPMK_LpgjDf",
   IGNORE_CONFERENCE_TALKS: "PLP1igyLx8foGJrtkgYL9nunvC5qMXTVaa",
+  IGNORE_MEETUPS: "PLP1igyLx8foF0ToOOgjdDnx2Z8stuSIpw",
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
 };
