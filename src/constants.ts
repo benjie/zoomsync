@@ -106,6 +106,11 @@ export const workingGroups = Object.freeze({
     repo: "",
     ignore: true,
   }),
+  IGNORE_GRAPHQL_LONDON: wg({
+    name: "GraphQL London",
+    repo: "",
+    ignore: true,
+  }),
 });
 
 export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
@@ -120,4 +125,5 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_CONFERENCE_TALKS: "PLP1igyLx8foGJrtkgYL9nunvC5qMXTVaa",
   IGNORE_MEETUPS: "PLP1igyLx8foF0ToOOgjdDnx2Z8stuSIpw",
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
+  IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
 };
