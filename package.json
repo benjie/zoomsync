@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "tsc && node dist/main.js"
+    "start": "tsc && node dist/main.js",
+    "quickstart": "node dist/main.js"
   },
   "private": true,
   "packageManager": "yarn@3.6.0",
