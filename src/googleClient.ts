@@ -132,5 +132,8 @@ export async function uploadVideo(
       },
     },
   });
-  console.log(`Uploaded!`);
+  console.log(
+    `Uploaded! https://www.youtube.com/watch?v=${response.data
+      .id!}&list=${playlistId}`
+  );
 }
