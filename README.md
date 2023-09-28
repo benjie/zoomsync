@@ -29,3 +29,35 @@ Stretch goals:
 - Add cards or end screen details
 - Add link back to specific video in meeting notes
 - Notify Discord (or somewhere) that the video has been posted
+
+## Usage
+
+First, create `src/secrets.ts` with the following code:
+
+```ts
+import { Secrets } from "./interfaces.js";
+
+export const SECRETS: Secrets = {
+  PORT: "6549",
+
+  ZOOM_CLIENT_ID: "PHWkXfbFSjWV5oNin9Djg",
+  ZOOM_CLIENT_SECRET: "...",
+  ZOOM_SECRET_TOKEN: "...",
+
+  GOOGLE_CLIENT_ID:
+    "731925967806-mqadm7eqva8pn9aa4eot0pd1utnsds57.apps.googleusercontent.com",
+  GOOGLE_CLIENT_SECRET: "...",
+};
+```
+
+You will need to populate the SECRET and TOKEN values from someone who knows
+them.
+
+Install the dependencies with `yarn`.
+
+Then, run `yarn start`. (As an optimization, future runs may use
+`yarn quickstart` (which skips compilation) if no code has changed.)
+
+You will probably see authentication errors, and links to log in. Log in to both
+links, then restart the process (in future we should make it so restarting the
+process is not needed). You can then follow the instructions on screen.
