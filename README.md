@@ -1,36 +1,47 @@
 # ZoomSync
 
-(WORK IN PROGRESS.)
+Manages uploading meetings from Zoom to YouTube; intended for Open Source
+Working Groups. Built specifically for the
+[GraphQL working group](https://github.com/graphql/graphql-wg), but is also used
+by the [Grafast WG](https://github.com/grafast/wg) and could be used for your
+projects too?
 
-Manages uploading meetings from Zoom to YouTube.
+## Status
 
-Aims:
+Stable; has been working for the GraphQL Foundation for months. Recently adopted
+by the Grafast WG.
 
-- Scan through recordings and determine which have been uploaded and which have
-  not
+## Current features
+
+- Scans through Zoom recordings and YouTube videos and determine which have been
+  uploaded and which have not
 - Figure out from each recording which working group, and which meeting, it
   applies to
-- AUtomatically reject recordings that don't look sensible (too short,
+- Automatically ignore Zoom recordings that don't look sensible (too short,
   insufficient data, etc)
 - When uploading:
   - Assign to correct playlist
   - Give consistent title
-  - Make sensible per-WG description, including linking to notes if appropriate
+  - Make sensible per-WG description
   - Publish
-- Convert transcripts to useful format and upload somewhere
 
-Stretch goals:
+## Future goals
 
+- Add a link from the description to the meeting notes if appropriate
+- Convert Zoom and/or YouTube transcripts to useful format and upload somewhere
 - Add a cover image
 - Allow updating previous recordings (e.g. customized descriptions/cover
   image/update title (if possible))
 - Cut blank section from beginning of recordings, or add the "start point" to
   the description
 - Add cards or end screen details
-- Add link back to specific video in meeting notes
+- Submit pull request to the meeting notes to add a link back to the specific
+  YouTube video
 - Notify Discord (or somewhere) that the video has been posted
 
-## Usage
+## Setup
+
+### Init
 
 First, run the `init.sh` script:
 
@@ -38,31 +49,48 @@ First, run the `init.sh` script:
 ./init.sh
 ```
 
-Then edit the `src/secrets.ts` file and populate the placeholders. You will need
-to populate the SECRET and TOKEN values from someone who knows them, or generate
-them yourself (see Generating Secrets below).
+Then:
 
-If you are not using this for the GraphQL project, edit `src/constants.ts` and
-update the `DEFAULT_UPLOAD_DESCRIPTION`, `ZOOM_USER_ID` (Zoom -> Profile >
-Account No.), `YOUTUBE_CHANNEL_ID`, `workingGroups` and `playlistIds` to match
-your setup. Every public video must be in a playlist.
+### For GraphQL WG
 
-Next, run `yarn start`. (As an optimization, future runs may use
-`yarn quickstart` (which skips compilation) if no code, including the
-constants/settings, has changed.)
+If you're using this for the GraphQL WG, edit `src/secrets.ts` and populate the
+SECRET and TOKEN values from someone who knows them (likely @benjie!)
+
+### For a different WG
+
+If you're not using this for the GraphQL WG, there's a few more steps:
+
+Edit the `src/secrets.ts` file and populate all of the placeholders, including
+the seemingly hardcoded ones - see Generating Secrets below for instructions.
+
+Edit `src/constants.ts` and update the `DEFAULT_UPLOAD_DESCRIPTION`,
+`ZOOM_USER_ID` (Zoom -> Profile > Account No.), `YOUTUBE_CHANNEL_ID`,
+`workingGroups` and `playlistIds` to match your setup. **Every public video must
+be in a playlist.**
+
+## Running
+
+Run `yarn start`. (As an optimization, future runs may use `yarn quickstart`
+(which skips compilation) if you are **absolutely certain** that no code,
+including the constants/settings, has changed.)
 
 You will probably see authentication errors, and/or links to log in. Log in to
-both links, then restart the process (in future we should make it so restarting
-the process is not needed). You can then follow the instructions on screen.
+both links, then kill (ctrl-c) and restart (`yarn start`) the process. (In
+future we should make it so restarting the process is not needed.)
 
-### Generating Secrets
+Follow the instructions on screen.
+
+## Generating Secrets
 
 If you are not using this for the GraphQL project, then you will need to create
 an "app" on both Zoom and Google so that you can use the APIs necessary to
 perform the sync. Follow the steps below, and then remove the `throw new Error`
 statement from `src/secrets.ts`.
 
-#### Zoom
+If there are mistakes in these instructions or you'd like to submit
+clarifications, please send a PR!
+
+### Zoom
 
 1. Log in to https://marketplace.zoom.us/
 2. Click Develop > Build App (top right)
@@ -86,7 +114,7 @@ statement from `src/secrets.ts`.
 
 That should do it.
 
-#### Google / YouTube
+### Google / YouTube
 
 1. Log in to https://console.cloud.google.com/
 2. Create an organization if you haven't already (I guess... Kinda fuzzy on this
