@@ -1,32 +1,11 @@
 import { WorkingGroup } from "./interfaces";
 
-/** In general, videos under 15 minutes tend to be one person waiting for a call to start */
-export const MIN_DURATION_MINUTES = 15;
-/** In general, videos under 50MB tend to be one person waiting for a call to start */
-export const MIN_FILE_SIZE_BYTES = 40_000_000;
-
-export const ZOOM_API_URL = "https://api.zoom.us/v2";
-export const ZOOM_AUTHORIZE_URL = "https://zoom.us/oauth/authorize";
-export const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
-export const ZOOM_USER_ID = "410467";
-
-export const GOOGLE_AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth";
-export const GOOGLE_TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
-
-export const YOUTUBE_CHANNEL_ID = "UCERcwLeheOXp_u61jEXxHMA";
-
-function wg(
-  spec: Partial<WorkingGroup> & Pick<WorkingGroup, "name" | "repo">
-): WorkingGroup {
-  return {
-    aliases: [],
-    // The default description for all videos
-    ytDescription: `\
+// The default description for all videos
+const DEFAULT_UPLOAD_DESCRIPTION = `\
 GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. GraphQL provides a complete and understandable description of the data in your API, gives clients the power to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables powerful developer tools. Get Started Here: https://graphql.org/\
-`,
-    ...spec,
-  };
-}
+`;
+export const ZOOM_USER_ID = "410467";
+export const YOUTUBE_CHANNEL_ID = "UCERcwLeheOXp_u61jEXxHMA";
 
 export const workingGroups = Object.freeze({
   WG: wg({
@@ -143,3 +122,27 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
 };
+
+/******************************************************************************/
+
+/** In general, videos under 15 minutes tend to be one person waiting for a call to start */
+export const MIN_DURATION_MINUTES = 15;
+/** In general, videos under 50MB tend to be one person waiting for a call to start */
+export const MIN_FILE_SIZE_BYTES = 40_000_000;
+
+export const ZOOM_API_URL = "https://api.zoom.us/v2";
+export const ZOOM_AUTHORIZE_URL = "https://zoom.us/oauth/authorize";
+export const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
+
+export const GOOGLE_AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth";
+export const GOOGLE_TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
+
+function wg(
+  spec: Partial<WorkingGroup> & Pick<WorkingGroup, "name" | "repo">
+): WorkingGroup {
+  return {
+    aliases: [],
+    ytDescription: DEFAULT_UPLOAD_DESCRIPTION,
+    ...spec,
+  };
+}
