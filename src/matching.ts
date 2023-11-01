@@ -74,11 +74,15 @@ export function categorizeUploads(
         `Video title '${title}' id '${videoId}' expected in playlist ${workingGroups[wgFromTitle].name}`
       );
       warnings++;
-    } else {
+    } else if (upload.status?.privacyStatus === "public") {
       console.warn(
         `Video title '${title}' id '${videoId}' unknown working group`
       );
       warnings++;
+    } else {
+      console.warn(
+        `Video (status=${upload.status?.privacyStatus}) with title '${title}' id '${videoId}' unknown working group; ignoring due to status`
+      );
     }
     const wg = wgFromTitle || wgFromPlaylist;
     if (wg) {
