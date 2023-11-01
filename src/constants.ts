@@ -83,7 +83,11 @@ export const workingGroups = Object.freeze({
   }),
   HTTP: wg({
     name: "GraphQL-over-HTTP Working Group",
-    aliases: ["GraphQL over HTTP Working Group", "GraphQL over HTTP"],
+    aliases: [
+      "GraphQL over HTTP Working Group",
+      "GraphQL over HTTP",
+      "GraphQL-over-HTTP",
+    ],
     repo: "https://github.com/graphql/graphql-over-http",
     max: 1,
   }),
@@ -111,6 +115,16 @@ export const workingGroups = Object.freeze({
     repo: "",
     ignore: true,
   }),
+  IGNORE_LIVESTREAMS: wg({
+    name: "Livestreams",
+    repo: "",
+    ignore: true,
+  }),
+  IGNORE_GRAPHQLCONF2023: wg({
+    name: "GraphQLConf",
+    repo: "",
+    ignore: true,
+  }),
 });
 
 export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
@@ -126,4 +140,6 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_MEETUPS: "PLP1igyLx8foF0ToOOgjdDnx2Z8stuSIpw",
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
+  IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
+  IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
 };
