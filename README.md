@@ -32,30 +32,16 @@ Stretch goals:
 
 ## Usage
 
-First, create `src/secrets.ts` with the following code:
+First, run the `init.sh` script:
 
-```ts
-import { Secrets } from "./interfaces.js";
-
-export const SECRETS: Secrets = {
-  PORT: "6549",
-
-  ZOOM_CLIENT_ID: "PHWkXfbFSjWV5oNin9Djg",
-  ZOOM_CLIENT_SECRET: "...",
-  ZOOM_SECRET_TOKEN: "...",
-
-  GOOGLE_CLIENT_ID:
-    "731925967806-mqadm7eqva8pn9aa4eot0pd1utnsds57.apps.googleusercontent.com",
-  GOOGLE_CLIENT_SECRET: "...",
-};
+```bash
+./init.sh
 ```
 
-You will need to populate the SECRET and TOKEN values from someone who knows
-them.
+Then edit the `src/secrets.ts` file and populate the placeholders. You will need
+to populate the SECRET and TOKEN values from someone who knows them.
 
-Install the dependencies with `yarn`.
-
-Then, run `yarn start`. (As an optimization, future runs may use
+Next, run `yarn start`. (As an optimization, future runs may use
 `yarn quickstart` (which skips compilation) if no code has changed.)
 
 You will probably see authentication errors, and links to log in. Log in to both
