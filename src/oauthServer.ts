@@ -97,7 +97,7 @@ export async function runOAuthServer(ctx: GlobalContext) {
     server.on("error", reject);
     server.on("listening", () => {
       console.log(
-        `OAuth server listening; login to Zoom at https://localhost:${SECRETS.PORT}/zoom/login`
+        `OAuth server listening; login to Zoom at https://localhost:${SECRETS.PORT}/zoom/login and Google at https://localhost:${SECRETS.PORT}/google/login`
       );
       resolve();
     });
