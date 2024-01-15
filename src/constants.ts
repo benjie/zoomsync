@@ -51,6 +51,7 @@ export const workingGroups = Object.freeze({
   }),
   COMPOSITE: wg({
     name: "Composite Schemas Working Group",
+    aliases: ["Composite Schemas WG"],
     repo: "https://github.com/graphql/composite-schemas-wg",
     max: 1,
   }),
