@@ -53,7 +53,7 @@ export const workingGroups = Object.freeze({
     name: "Composite Schemas Working Group",
     aliases: ["Composite Schemas WG"],
     repo: "https://github.com/graphql/composite-schemas-wg",
-    max: 1,
+    max: 5,
   }),
   INPUT_UNIONS: wg({
     name: "Input Unions Working Group",
@@ -129,7 +129,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
 /** In general, videos under 15 minutes tend to be one person waiting for a call to start */
 export const MIN_DURATION_MINUTES = 15;
 /** In general, videos under 50MB tend to be one person waiting for a call to start */
-export const MIN_FILE_SIZE_BYTES = 40_000_000;
+export const MIN_FILE_SIZE_BYTES = 38_500_000;
 
 export const ZOOM_API_URL = "https://api.zoom.us/v2";
 export const ZOOM_AUTHORIZE_URL = "https://zoom.us/oauth/authorize";
