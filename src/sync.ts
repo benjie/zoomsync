@@ -65,7 +65,7 @@ export async function uploadPending(ctx: GlobalContext, pendings: Pending[]) {
       `Would you like me to upload the above? (You should check YouTube to ensure there will be no duplicates.) [y/N] `
     ))
   ) {
-    throw new Error(`User requested to abort`);
+    console.log(`User requested to skip`);
   } else {
     for (const toUploadSpec of toUploadSpecs) {
       const dirName = Buffer.from(toUploadSpec.meeting.uuid!).toString("hex");
