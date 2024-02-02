@@ -117,7 +117,7 @@ export function categorizeUploads(
   }
 
   function guessWgByPlaylist(upload: youtube_v3.Schema$PlaylistItem) {
-    let guess: string | null = null;
+    let guess: keyof typeof workingGroups | null = null;
     const playlistIds = playlistIdsByVideoId[upload.contentDetails?.videoId!];
     if (playlistIds) {
       for (const playlistId of playlistIds) {
@@ -126,7 +126,12 @@ export function categorizeUploads(
             `Video ${upload.contentDetails?.videoId!} is in multiple playlists!`
           );
         }
-        guess = playlists[playlistId].workingGroupId;
+        const pl = playlists[playlistId];
+        guess = pl.workingGroupId;
+        const wg = workingGroups[guess];
+        if (wg?.ignore) {
+          return guess;
+        }
       }
     }
     return guess as keyof typeof workingGroups | null;
