@@ -46,7 +46,7 @@ export const workingGroups = Object.freeze({
   }),
   INCREMENTAL: wg({
     name: "Incremental Delivery Working Group",
-    aliases: ["Incremental Delivery WG"],
+    aliases: ["Incremental Delivery WG", "Incremental Delivery"],
     repo: "https://github.com/robrichard/defer-stream-wg",
   }),
   COMPOSITE: wg({
