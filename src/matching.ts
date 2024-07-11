@@ -3,6 +3,7 @@ import { getPlaylists } from "./googleClient";
 import {
   MIN_DURATION_MINUTES,
   MIN_FILE_SIZE_BYTES,
+  VIDEO_IGNORE_LIST,
   workingGroups,
 } from "./constants";
 import { Meeting } from "./zoomClient";
@@ -75,10 +76,12 @@ export function categorizeUploads(
       );
       warnings++;
     } else if (upload.status?.privacyStatus === "public") {
-      console.warn(
-        `Video title '${title}' id '${videoId}' unknown working group`
-      );
-      warnings++;
+      if (!VIDEO_IGNORE_LIST.includes(videoId)) {
+        console.warn(
+          `Video title '${title}' id '${videoId}' unknown working group`
+        );
+        warnings++;
+      }
     } else {
       console.warn(
         `Video (status=${upload.status?.privacyStatus}) with title '${title}' id '${videoId}' unknown working group; ignoring due to status`

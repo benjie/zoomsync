@@ -124,6 +124,8 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
 };
 
+export const VIDEO_IGNORE_LIST = ["bInp--btyYg"];
+
 /******************************************************************************/
 
 /** In general, videos under 15 minutes tend to be one person waiting for a call to start */
