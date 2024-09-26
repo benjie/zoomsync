@@ -105,6 +105,11 @@ export const workingGroups = Object.freeze({
     repo: "",
     ignore: true,
   }),
+  IGNORE_GRAPHQLCONF2024: wg({
+    name: "GraphQLConf",
+    repo: "",
+    ignore: true,
+  }),
 });
 
 export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
@@ -122,6 +127,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
+  IGNORE_GRAPHQLCONF2024: "PLP1igyLx8foEO0qsyk3IFn1peYSVGDBFA",
 };
 
 export const VIDEO_IGNORE_LIST = ["bInp--btyYg"];
