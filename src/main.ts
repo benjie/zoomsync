@@ -115,7 +115,7 @@ async function _dangerouslyRunMainProcess(ctx: GlobalContext, now = false) {
   let playlists = await cache("playlists", () => getPlaylists(ctx));
   let categorizedVideos = categorizeUploads(uploads, playlists);
 
-  for (let monthsAgo = 6; monthsAgo >= 0; monthsAgo--) {
+  for (let monthsAgo = 3; monthsAgo >= 0; monthsAgo--) {
     console.log();
     const allRecordingsFromMonth = await cache(`recordings-${monthsAgo}`, () =>
       getZoomRecordings(ctx, monthsAgo)

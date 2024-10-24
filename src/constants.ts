@@ -130,7 +130,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_GRAPHQLCONF2024: "PLP1igyLx8foEO0qsyk3IFn1peYSVGDBFA",
 };
 
-export const VIDEO_IGNORE_LIST = ["bInp--btyYg"];
+export const VIDEO_IGNORE_LIST = ["bInp--btyYg", "GFAaBIok2qQ"];
 
 /******************************************************************************/
 
