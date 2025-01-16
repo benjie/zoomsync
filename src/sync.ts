@@ -135,8 +135,12 @@ function subtitle(pending: Pending, count: number): string {
       dd >= t.dateMin && dd <= t.dateMax && (t.dow == null || t.dow === dow)
   );
   if (!subtitle && count === 1) {
-    // This generally happens when the primary WG is delayed, e.g. due to holidays
-    subtitle = wg.subtitles[0];
+    // This generally happens when the primary WG is delayed, e.g. due to holidays.
+    // See if we can match the primary, ignoring the date constraints.
+    const t = wg.subtitles[0];
+    if (t.dow == null || t.dow === dow) {
+      subtitle = t;
+    }
   }
   if (subtitle) {
     return ` ${subtitle.label}`;
