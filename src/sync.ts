@@ -120,7 +120,7 @@ function makeTitle(pending: Pending, count: number): string {
   return `${wg.name}${subtitle(pending, count)} - ${pending.date}`;
 }
 
-function subtitle(pending: Pending, _count: number): string {
+function subtitle(pending: Pending, count: number): string {
   const wg = workingGroups[pending.wgId];
   if (!wg.subtitles) return "";
   // Parse the date as if it were in San Fran (go with noon so we don't have to care about DST)
@@ -130,15 +130,19 @@ function subtitle(pending: Pending, _count: number): string {
     weekday: "short",
   });
   const dd = parseInt(pending.date.slice(8), 10);
-  const subtitle = wg.subtitles.find(
+  let subtitle = wg.subtitles.find(
     (t) =>
       dd >= t.dateMin && dd <= t.dateMax && (t.dow == null || t.dow === dow)
   );
+  if (!subtitle && count === 1) {
+    // This generally happens when the primary WG is delayed, e.g. due to holidays
+    subtitle = wg.subtitles[0];
+  }
   if (subtitle) {
     return ` ${subtitle.label}`;
   } else {
     throw new Error(
-      `Failed to find matching subtitle for date ${pending.date} (dow = ${dow}, dd = ${dd}) for working group ${pending.wgId}`
+      `Failed to find matching subtitle for date ${pending.date} (dow = ${dow}, dd = ${dd}, count = ${count}) for working group ${pending.wgId}`
     );
   }
 }
