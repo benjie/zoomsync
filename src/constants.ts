@@ -82,6 +82,7 @@ export const workingGroups = Object.freeze({
   }),
   COMMUNITY: wg({
     name: "Community Working Group",
+    aliases: ["Community WG"],
     repo: "https://github.com/graphql/community-wg",
     max: 1,
   }),
