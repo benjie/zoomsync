@@ -80,6 +80,11 @@ export const workingGroups = Object.freeze({
     name: "Client Controlled Nullability",
     repo: "https://github.com/graphql/client-controlled-nullability",
   }),
+  COMMUNITY: wg({
+    name: "Community Working Group",
+    repo: "https://github.com/graphql/community-wg",
+    max: 1,
+  }),
   IGNORE_CONFERENCE_TALKS: wg({
     name: "CONFERENCE TALKS",
     repo: "",
@@ -124,6 +129,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_CONFERENCE_TALKS: "PLP1igyLx8foGJrtkgYL9nunvC5qMXTVaa",
   IGNORE_MEETUPS: "PLP1igyLx8foF0ToOOgjdDnx2Z8stuSIpw",
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
+  COMMUNITY: "PLP1igyLx8foHhWZk2u1SthsW1weH3VA7l",
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
