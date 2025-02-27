@@ -77,8 +77,9 @@ export const workingGroups = Object.freeze({
     max: 1,
   }),
   CCN: wg({
-    name: "Client Controlled Nullability",
-    repo: "https://github.com/graphql/client-controlled-nullability",
+    name: "Nullability WG",
+    aliases: ["Client Controlled Nullability"],
+    repo: "https://github.com/graphql/nullability-wg",
   }),
   COMMUNITY: wg({
     name: "Community Working Group",
