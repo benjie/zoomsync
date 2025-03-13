@@ -113,7 +113,8 @@ export function categorizeUploads(
 
   function guessWgByTitle(upload: youtube_v3.Schema$PlaylistItem) {
     try {
-      return guessWgByTitleText(upload.snippet?.title);
+      const title = upload.snippet?.title?.replace(/^\[[^\]]+\]/, "").trim();
+      return guessWgByTitleText(title);
     } catch (e: any) {
       throw new Error(`Video ${upload.contentDetails?.videoId!}: ${e.message}`);
     }
