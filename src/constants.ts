@@ -87,6 +87,12 @@ export const workingGroups = Object.freeze({
     repo: "https://github.com/graphql/community-wg",
     max: 1,
   }),
+  OTEL: wg({
+    name: "OTel Working Group",
+    aliases: ["OTel WG"],
+    repo: "https://github.com/graphql/otel-wg",
+    max: 1,
+  }),
   IGNORE_CONFERENCE_TALKS: wg({
     name: "CONFERENCE TALKS",
     repo: "",
@@ -132,6 +138,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   IGNORE_MEETUPS: "PLP1igyLx8foF0ToOOgjdDnx2Z8stuSIpw",
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
   COMMUNITY: "PLP1igyLx8foHhWZk2u1SthsW1weH3VA7l",
+  OTEL: "PLP1igyLx8foFO2xFpWp7IturLnInoyWv1",
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
