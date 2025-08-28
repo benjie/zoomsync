@@ -36,6 +36,8 @@ export async function runOAuthServer(ctx: GlobalContext) {
         response_type: "code",
         redirect_uri: zoomRedirectUri,
         client_id: SECRETS.ZOOM_CLIENT_ID,
+        scope:
+          "meeting:read meeting:read:admin meeting_summary:read recording:read recording:write meeting_summary:read:admin",
       })}`
     );
   });
