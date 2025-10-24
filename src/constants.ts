@@ -93,6 +93,12 @@ export const workingGroups = Object.freeze({
     repo: "https://github.com/graphql/otel-wg",
     max: 1,
   }),
+  AI: wg({
+    name: "AI Working Group",
+    aliases: ["AI WG"],
+    repo: "https://github.com/graphql/ai-wg",
+    max: 1,
+  }),
   IGNORE_CONFERENCE_TALKS: wg({
     name: "CONFERENCE TALKS",
     repo: "",
