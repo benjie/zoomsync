@@ -145,6 +145,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   CCN: "PLP1igyLx8foFPThkIGEUVbne2_DBwgQke",
   COMMUNITY: "PLP1igyLx8foHhWZk2u1SthsW1weH3VA7l",
   OTEL: "PLP1igyLx8foFO2xFpWp7IturLnInoyWv1",
+  AI: "PLP1igyLx8foHcFyh84YcQOfYQ-kNRbPdi",
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
