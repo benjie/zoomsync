@@ -99,6 +99,12 @@ export const workingGroups = Object.freeze({
     repo: "https://github.com/graphql/ai-wg",
     max: 1,
   }),
+  GOLDEN_PATH: wg({
+    name: "Golden Path Working Group",
+    aliases: ["Golden Path WG"],
+    repo: "https://github.com/graphql/golden-path-wg",
+    max: 1,
+  }),
   IGNORE_CONFERENCE_TALKS: wg({
     name: "CONFERENCE TALKS",
     repo: "",
@@ -146,6 +152,7 @@ export const playlistIds: { [key in keyof typeof workingGroups]: string } = {
   COMMUNITY: "PLP1igyLx8foHhWZk2u1SthsW1weH3VA7l",
   OTEL: "PLP1igyLx8foFO2xFpWp7IturLnInoyWv1",
   AI: "PLP1igyLx8foHcFyh84YcQOfYQ-kNRbPdi",
+  GOLDEN_PATH: "PLP1igyLx8foH_rlZY638-w_iTFBiKeN_z",
   IGNORE_GRAPHQL_LONDON: "PLP1igyLx8foEZXJIBbWS3SR7ylRK1yxff",
   IGNORE_LIVESTREAMS: "PLP1igyLx8foG5294jnyQV_R1Hg8ItkUGF",
   IGNORE_GRAPHQLCONF2023: "PLP1igyLx8foE9SlDLI1Vtlshcon5r1jMJ",
