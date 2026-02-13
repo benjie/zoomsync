@@ -101,7 +101,7 @@ export const workingGroups = Object.freeze({
   }),
   GOLDEN_PATH: wg({
     name: "Golden Path Working Group",
-    aliases: ["Golden Path WG"],
+    aliases: ["GraphQL Golden Path WG", "Golden Path WG"],
     repo: "https://github.com/graphql/golden-path-wg",
     max: 1,
   }),
