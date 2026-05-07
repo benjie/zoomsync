@@ -187,6 +187,8 @@ const byteFormatter = new Intl.NumberFormat([], {
   unitDisplay: "narrow",
 });
 
+const SAFE_TO_IGNORE = /^Ambassador/;
+
 export function getHumanDetails(meeting: Meeting, invert = true) {
   const { duration, total_size } = meeting;
   const humanDuration =
@@ -236,9 +238,11 @@ export function getPendingMeetings(
     }
     const wgId = guessWgByMeeting(meeting);
     if (!wgId) {
-      console.warn(
-        `${WARN}Cannot guess the working group for meeting '${topic}'`
-      );
+      if (!topic || !SAFE_TO_IGNORE.test(topic)) {
+        console.warn(
+          `${WARN}Cannot guess the working group for meeting '${topic}'`
+        );
+      }
       continue;
     }
 
